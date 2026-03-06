@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Powered Study Planner</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        
+        <!-- Auth Section -->
+        <section id="auth-section" class="auth-section">
+            <div class="auth-box">
+                <h1 class="auth-title">Welcome</h1>
+                <p class="auth-subtitle" id="auth-subtitle">Login to your Study Planner</p>
+                
+                <form id="auth-form">
+                    <div class="form-group" id="name-group" style="display: none;">
+                        <label for="reg-name"><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" id="reg-name" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="auth-email"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="auth-email" placeholder="student@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="auth-password"><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="auth-password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn-primary w-full" id="auth-submit-btn">Login</button>
+                </form>
+                
+                <div class="auth-switch">
+                    <span id="auth-switch-text">Don't have an account?</span>
+                    <button id="auth-toggle-btn" class="btn-link">Register here</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Dashboard App -->
+        <div id="main-app-section" class="hidden">
+            <header>
+            <div class="header-content">
+                <h1>AI Powered Study Planner</h1>
+                <p class="subtitle">Organize tasks, track progress, and boost productivity with AI-assisted planning</p>
+            </div>
+            <div class="header-actions" style="display: flex; gap: 0.5rem; align-items: center;">
+                <div class="export-dropdown" style="position: relative;">
+                    <button id="export-menu-btn" class="btn-icon" title="Export Tasks"> <i class="fas fa-download"></i>
+                    </button>
+                    <div id="export-menu" class="dropdown-content hidden">
+                        <button id="export-csv" class="dropdown-item"><i class="fas fa-file-csv"></i> Export
+                            CSV</button>
+                        <button id="export-pdf" class="dropdown-item"><i class="fas fa-file-pdf"></i> Export
+                            PDF</button>
+                    </div>
+                </div>
+                <button id="theme-toggle" class="btn-icon" title="Toggle Light/Dark Mode"> <i class="fas fa-sun"></i>
+                </button>
+                <button id="enable-notifications" class="btn-icon" title="Enable Notifications"> <i
+                        class="fas fa-bell"></i> </button>
+                <div class="user-dropdown" style="position: relative; margin-left: 0.5rem; padding-left: 0.5rem; border-left: 1px solid var(--surface-border);">
+                    <button id="logout-btn" class="btn-icon" title="Logout" style="color: var(--danger-color);"> <i class="fas fa-sign-out-alt"></i> </button>
+                </div>
+            </div>
+        </header>
+        <section class="dashboard-section">
+            <div class="dashboard-stats">
+                <div class="stat-card pending-card">
+                    <div class="stat-icon"><i class="fas fa-hourglass-half"></i></div>
+                    <div class="stat-details"> <span class="stat-value" id="pending-count">0</span> <span
+                            class="stat-label">Pending</span> </div>
+                </div>
+                <div class="stat-card completed-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-details"> <span class="stat-value" id="completed-count">0</span> <span
+                            class="stat-label">Completed</span> </div>
+                </div>
+                <div class="stat-card total-card">
+                    <div class="stat-icon"><i class="fas fa-tasks"></i></div>
+                    <div class="stat-details"> <span class="stat-value" id="total-count">0</span> <span
+                            class="stat-label">Total Tasks</span> </div>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-header">
+                    <h2>Overall Progress</h2> <span id="progress-text">0%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+
+            <!-- Pomodoro Timer -->
+            <div class="pomodoro-container">
+                <div class="pomodoro-header">
+                    <h2><i class="fas fa-stopwatch"></i> Pomodoro Timer</h2>
+                    <span class="session-count">Sessions: <span id="pomodoro-sessions">0</span></span>
+                </div>
+                <div class="pomodoro-body">
+                    <div class="timer-display" id="pomodoro-time">25:00</div>
+                    <div class="timer-status" id="pomodoro-status">Focus Time</div>
+                </div>
+                <div class="pomodoro-controls">
+                    <button id="pomodoro-start" class="btn-primary"><i class="fas fa-play"></i> Start</button>
+                    <button id="pomodoro-pause" class="btn-secondary hidden"><i class="fas fa-pause"></i> Pause</button>
+                    <button id="pomodoro-reset" class="btn-secondary"><i class="fas fa-redo"></i> Reset</button>
+                    <button id="pomodoro-mode" class="btn-secondary" title="Toggle Break/Focus"><i
+                            class="fas fa-coffee"></i></button>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+        </section>
+        <section class="input-section">
+            <form id="task-form">
+                <div class="form-grid">
+                    <div class="form-group row-span-1 col-span-2"> <label for="task-input"><i
+                                class="fas fa-book-open"></i> Task Description</label> <input type="text"
+                            id="task-input" placeholder="What do you need to study?" required> </div>
+                    <div class="form-group"> <label for="subject-input"><i class="fas fa-tag"></i> Subject</label>
+                        <input type="text" id="subject-input" placeholder="e.g., Math" required>
+                    </div>
+                    <div class="form-group"> <label for="deadline-input"><i class="fas fa-calendar-alt"></i>
+                            Deadline</label> <input type="datetime-local" id="deadline-input" required> </div>
+                    <div class="form-group"> <label for="priority-input"><i class="fas fa-flag"></i> Priority</label>
+                        <select id="priority-input" required>
+                            <option value="high">High</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="form-group"> <label for="file-input"><i class="fas fa-paperclip"></i> Attachment (Max
+                            2MB)</label>
+                        <div class="file-drop-area"> <span id="file-name-display">Choose a file...</span> <input
+                                type="file" id="file-input" accept=".pdf,.doc,.docx,.txt,image/*"> </div>
+                    </div>
+                </div> <button type="submit" class="btn-primary w-full"> <span class="btn-text">Add Task</span> <i
+                        class="fas fa-plus"></i> </button>
+            </form>
+        </section>
+        <section class="tasks-section">
+            <!-- AI Suggestion Container -->
+            <div id="ai-suggestion-container" class="ai-suggestion hidden">
+                <div class="ai-icon"><i class="fas fa-robot"></i></div>
+                <div class="ai-content">
+                    <h3>AI Study Suggestion</h3>
+                    <p id="ai-suggestion-text">Analyzing your schedule...</p>
+                </div>
+            </div>
+
+            <div class="tasks-header">
+                <h2>Your Tasks</h2>
+                <div class="header-controls">
+                    <div class="view-toggles"> <button id="btn-list-view" class="view-btn active" title="List View"><i
+                                class="fas fa-list"></i></button> <button id="btn-calendar-view" class="view-btn"
+                            title="Calendar View"><i class="fas fa-calendar-alt"></i></button> </div>
+                    <div class="filters" id="list-filters"> <button class="filter-btn active"
+                            data-filter="all">All</button> <button class="filter-btn"
+                            data-filter="pending">Pending</button> <button class="filter-btn"
+                            data-filter="completed">Completed</button> </div>
+                </div>
+            </div> <!-- List View -->
+            <ul class="task-list" id="task-list"> <!-- Tasks will be injected here via JS --> </ul>
+            <!-- Calendar View -->
+            <div id="calendar-view" class="calendar-container hidden">
+                <div class="calendar-header"> <button id="prev-month" class="btn-icon"><i
+                            class="fas fa-chevron-left"></i></button>
+                    <h3 id="calendar-month-year">Month Year</h3> <button id="next-month" class="btn-icon"><i
+                            class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="calendar-grid">
+                    <div class="cal-weekday">Sun</div>
+                    <div class="cal-weekday">Mon</div>
+                    <div class="cal-weekday">Tue</div>
+                    <div class="cal-weekday">Wed</div>
+                    <div class="cal-weekday">Thu</div>
+                    <div class="cal-weekday">Fri</div>
+                    <div class="cal-weekday">Sat</div>
+                    <div id="calendar-days" class="cal-days"></div>
+                </div>
+                <div class="calendar-selected-tasks">
+                    <h3 id="selected-date-title">Tasks for Selected Date</h3>
+                    <ul class="task-list" id="calendar-task-list"> <!-- Tasks for selected date --> </ul>
+                </div>
+            </div>
+        </section>
+        </div> <!-- End Main App Section -->
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

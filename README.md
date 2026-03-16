@@ -8,7 +8,7 @@ This project was built using AI tools and deployed on Vercel as part of an inter
 
 # 🌐 Live Demo
 
-https://your-vercel-link.vercel.app
+https://study-planner-beige-eight.vercel.app/
 
 ---
 
